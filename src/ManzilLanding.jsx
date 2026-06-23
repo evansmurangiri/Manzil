@@ -375,9 +375,9 @@ export default function ManzilLanding() {
       </nav>
 
       <section className="manzil-hero">
-        <h1>Navigating Dubai's Finest Communities</h1>
+        <h1>Navigating Mombasa's Finest Communities</h1>
         <p className="sub">
-          Find your <span className="accent">perfect investment</span> in Dubai real estate with
+          Find your <span className="accent">perfect investment</span> in Mombasa real estate with
           our expertise. We guide you through the entire process, from discovery to transaction
           completion.
         </p>
@@ -433,7 +433,7 @@ export default function ManzilLanding() {
         </div>
       </section>
 
-      <footer className="manzil-footer">© 2026 Manzil • Dubai Real Estate</footer>
+      <footer className="manzil-footer">© 2026 Manzil • Mombasa Real Estate</footer>
     </div>
   );
 }
