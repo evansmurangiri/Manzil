@@ -397,7 +397,7 @@ export default function ManzilLanding() {
       </section>
 
       <section className="manzil-approach">
-        <h2>Our Comprehensive Approach</h2>
+        <h2>How it Works</h2>
         <div className="approach-grid">
           {approachItems.map((item) => (
             <div className="approach-card" key={item.title}>
