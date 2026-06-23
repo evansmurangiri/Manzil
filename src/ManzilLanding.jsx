@@ -322,7 +322,7 @@ const projects = [
     name: "Isolana Residences",
     desc: "Limited collection of just 71 units, designed by LA's iconic architect Tony Ashai. Amenities include a 55-meter infinity pool, Zen garden, open-to-sky indoor courtyard.",
     completion: "Q1 2027",
-    img: "https://images.unsplash.com/photo-1545193544-064faa9c20e1?q=80&w=900&auto=format&fit=crop",
+    img: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=900&auto=format&fit=crop",
   },
   {
     name: "Mackerel Tower",
