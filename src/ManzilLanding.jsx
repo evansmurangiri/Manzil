@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import must from "./assets/must.jpg";
 
 const WHATSAPP_NUMBER = "254704669973";
-const WHATSAPP_MESSAGE = "I want to know about Manzil Residences";
+const WHATSAPP_MESSAGE = "I want to know about Asya Consulting Residences";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
 const styles = `
@@ -63,16 +63,38 @@ const styles = `
   }
 
   .manzil-nav{
-    position: sticky; top:0; z-index: 10;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 10;
     display:flex; align-items:center; justify-content:space-between;
     flex-wrap: wrap;
     gap: 12px;
     padding: 28px 64px;
+    background: rgba(10, 13, 10, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
   }
   .manzil-logo{
     display:flex; align-items:center; gap:10px;
     font-weight: 800; font-size: 1.25rem; line-height: 1.75rem; letter-spacing: -0.02em;
   }
+  .manzil-nav-menu{
+    display:flex; align-items:center; gap: 36px;
+    flex-wrap: wrap;
+  }
+  .manzil-nav-item{
+    color: var(--text-white);
+    font-weight: 600; font-size: 1rem; line-height: 1.5rem;
+    text-decoration:none;
+    opacity: 0.85;
+    transition: opacity .2s ease, color .2s ease;
+  }
+  .manzil-nav-item:hover{ opacity:1; color: var(--lime); }
   .manzil-nav-link{
     display:flex; align-items:center; gap:8px;
     color: var(--lime);
@@ -81,7 +103,7 @@ const styles = `
     cursor:pointer;
     background:none; border:none;
   }
-  a.btn-blue, a.btn-lime{
+  a.btn-lime{
     text-decoration: none;
   }
 
@@ -111,34 +133,6 @@ const styles = `
     text-shadow: 0 2px 16px rgba(0,0,0,0.5);
   }
   .manzil-hero p.sub .accent{ color: var(--lime); font-weight: 700; }
-
-  .founder-card{
-    max-width: 620px;
-    margin: 0 auto;
-    background: rgba(13,17,14,0.92);
-    border: 1px solid var(--card-border);
-    border-radius: 24px;
-    padding: 40px 48px 44px;
-    backdrop-filter: blur(8px);
-  }
-  .founder-card h3{
-    font-size: 1.5rem; line-height: 2rem; font-weight: 800; margin-bottom: 18px;
-  }
-  .founder-card p{
-    color: var(--text-dim); font-size: 1rem; line-height: 1.5rem; font-weight: 500;
-    margin-bottom: 30px;
-  }
-  .btn-blue{
-    display:inline-flex; align-items:center; gap:10px;
-    background: var(--blue);
-    color: #052c33;
-    font-weight: 700; font-size: 1rem; line-height: 1.5rem;
-    padding: 16px 32px;
-    border-radius: 50px;
-    border:none; cursor:pointer;
-    transition: transform .2s ease, box-shadow .2s ease;
-  }
-  .btn-blue:hover{ transform: translateY(-2px); box-shadow: 0 10px 30px rgba(111,224,245,0.25); }
 
   .manzil-approach{
     padding: 60px 64px 30px;
@@ -261,24 +255,24 @@ const styles = `
 
   @media (max-width: 900px){
     .manzil-nav{ padding: 22px 24px; }
+    .manzil-nav-menu{ gap: 18px; }
     .manzil-hero{ padding: 60px 24px 80px; }
-    .founder-card{ padding: 32px 26px; }
     .manzil-approach{ padding: 40px 24px 0; }
     .approach-grid{ grid-template-columns: 1fr; gap:20px; margin-bottom: 60px; }
     .manzil-projects{ padding: 0 24px 70px; }
     .projects-grid{ grid-template-columns: 1fr; gap:20px; }
-    .btn-blue, .btn-lime{ width: 100%; justify-content:center; }
+    .btn-lime{ width: 100%; justify-content:center; }
   }
 
   @media (max-width: 480px){
     .manzil-nav{ padding: 18px 18px; }
+    .manzil-nav-menu{ gap: 12px; }
+    .manzil-nav-item{ font-size: 0.85rem; }
     .manzil-logo{ font-size: 1.125rem; }
     .manzil-nav-link{ font-size: 0.9rem; }
     .manzil-hero{ padding: 44px 18px 56px; }
     .manzil-hero h1{ font-size: 1.85rem; line-height: 2.15rem; }
     .manzil-hero p.sub{ margin-bottom: 36px; }
-    .founder-card{ padding: 26px 20px 30px; border-radius: 18px; }
-    .founder-card h3{ font-size: 1.25rem; line-height: 1.75rem; }
     .manzil-approach{ padding: 32px 18px 0; }
     .manzil-approach h2{ margin-bottom: 36px; }
     .approach-card{ padding: 28px 22px; }
@@ -286,7 +280,7 @@ const styles = `
     .manzil-projects{ padding: 0 18px 56px; }
     .project-card .img{ height: 180px; }
     .project-card .content{ padding: 22px 20px 24px; }
-    .btn-blue, .btn-lime{ padding: 14px 20px; }
+    .btn-lime{ padding: 14px 20px; }
   }
 `;
 
@@ -356,48 +350,90 @@ const approachItems = [
   },
 ];
 
+const ProjectsGrid = () => (
+  <div className="projects-grid">
+    {projects.map((p) => (
+      <div className="project-card" key={p.name}>
+        <div className="img" style={{ backgroundImage: `url('${p.img}')` }}></div>
+        <div className="content">
+          <h3>{p.name}</h3>
+          <p>{p.desc}</p>
+          <div className="completion">
+            <span>Completion by:</span> {p.completion}
+          </div>
+          <a className="btn-lime" href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">
+            Get Details
+          </a>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 export default function ManzilLanding() {
+  const navRef = useRef(null);
+  const [navHeight, setNavHeight] = useState(0);
+
+  // Keep a spacer in sync with the fixed navbar's real height,
+  // so content below never jumps under it (handles wrapping on small screens too).
+  useEffect(() => {
+    const navEl = navRef.current;
+    if (!navEl) return;
+
+    const updateHeight = () => setNavHeight(navEl.offsetHeight);
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+    resizeObserver.observe(navEl);
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, []);
+
   return (
     <div className="manzil-root">
       <style>{styles}</style>
       <div className="bg-fixed" style={{ backgroundImage: `url(${must})` }}></div>
       <div className="topbar-accent"></div>
 
-      <nav className="manzil-nav">
+      <nav className="manzil-nav" ref={navRef}>
         <div className="manzil-logo">
           <SparkleLogo />
-          Manzil
+          Asya Consulting
         </div>
-        <a className="manzil-nav-link" href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">
-          <ChatIcon />
-          Contact Us
-        </a>
+        <div className="manzil-nav-menu">
+          <a className="manzil-nav-item" href="#home">Home</a>
+          <a className="manzil-nav-item" href="#properties">Properties</a>
+          <a className="manzil-nav-item" href="#about">About</a>
+          <a className="manzil-nav-link" href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">
+            <ChatIcon />
+            Contact Us
+          </a>
+        </div>
       </nav>
+      <div style={{ height: navHeight }} aria-hidden="true"></div>
 
-      <section className="manzil-hero">
+      <section className="manzil-hero" id="home">
         <h1>Navigating Mombasa's Finest Communities</h1>
         <p className="sub">
           Find your <span className="accent">perfect investment</span> in Mombasa real estate with
           our expertise. We guide you through the entire process, from discovery to transaction
           completion.
         </p>
-
-        <div className="founder-card">
-          <h3>Built by 2x tech-founder</h3>
-          <p>
-            Real estate backed by tech-first thinking. Built by a founder who's scaled products
-            for over a decade — we bring data, transparency, and efficiency to your property
-            investment journey.
-          </p>
-          <a className="btn-blue" href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">
-            <ChatIcon />
-            Contact the founder
-          </a>
-        </div>
       </section>
 
-      <section className="manzil-approach">
-        <h2>How it Works</h2>
+      <section className="manzil-projects" id="properties">
+        <h2 className="section-title">
+          <span className="lime-text">Handpicked Projects</span> for You
+        </h2>
+        <ProjectsGrid />
+      </section>
+
+      <section className="manzil-approach" id="about">
+        <h2>Our Comprehensive Approach</h2>
         <div className="approach-grid">
           {approachItems.map((item) => (
             <div className="approach-card" key={item.title}>
@@ -414,26 +450,10 @@ export default function ManzilLanding() {
       </section>
 
       <section className="manzil-projects">
-        <div className="projects-grid">
-          {projects.map((p) => (
-            <div className="project-card" key={p.name}>
-              <div className="img" style={{ backgroundImage: `url('${p.img}')` }}></div>
-              <div className="content">
-                <h3>{p.name}</h3>
-                <p>{p.desc}</p>
-                <div className="completion">
-                  <span>Completion by:</span> {p.completion}
-                </div>
-                <a className="btn-lime" href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">
-                  Get Details
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ProjectsGrid />
       </section>
 
-      <footer className="manzil-footer">© 2026 Manzil • Mombasa Real Estate</footer>
+      <footer className="manzil-footer">© 2026 Asya Consulting • Mombasa Real Estate</footer>
     </div>
   );
 }
