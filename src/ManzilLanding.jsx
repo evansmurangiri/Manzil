@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import must from "./assets/must.jpg";
 
-const WHATSAPP_NUMBER = "254704669973";
+const WHATSAPP_NUMBER = "254736681362";
 const WHATSAPP_MESSAGE = "I want to know about Asya Consulting Residences";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
@@ -364,7 +364,7 @@ const styles = `
     color: rgba(212,255,61,0.07);
     pointer-events: none;
     font-family: Georgia, serif;
-}
+}s
   .tc-stars{
     display: flex; gap: 3px;
   }
